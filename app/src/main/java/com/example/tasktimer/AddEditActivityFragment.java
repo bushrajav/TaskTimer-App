@@ -1,31 +1,69 @@
 package com.example.tasktimer;
-
+import android.app.ActionBar;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toolbar;
+
 
 public class AddEditActivityFragment extends Fragment {
     private static final String TAG = "AddEditActivityFragment";
 
-    public enum FragmentEditMode {ADD, EDIT}
+    private enum FragmentEditMode {ADD, EDIT}
 
     private FragmentEditMode mMode;
     private EditText mNameTextView;
     private EditText mDescriptionTextView;
     private EditText mSortOrderTextView;
-    private Button mSaveButton;
+    private OnSaveClicked mSaveListener = null;
+
+    interface OnSaveClicked {
+        void onSaveClicked();
+    }
+
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        Activity activity = getActivity();
+        if (!(activity instanceof OnSaveClicked)) {
+            throw new ClassCastException(activity.getClass().getSimpleName() + " must implement AddEditActivityFragment.OnSaveClicked interface ");
+        }
+        mSaveListener = (OnSaveClicked) activity;
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+       androidx.appcompat.app.ActionBar actionBar = ((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mSaveListener = null;
+        androidx.appcompat.app.ActionBar actionBar=((AppCompatActivity)getActivity()).getSupportActionBar();
+        if(actionBar!=null){
+            actionBar.setDisplayHomeAsUpEnabled(false);
+        }
+
+    }
 
     public AddEditActivityFragment() {
         Log.d(TAG, "AddEditActivityFragment: constructor called");
@@ -39,8 +77,10 @@ public class AddEditActivityFragment extends Fragment {
         mNameTextView = view.findViewById(R.id.addedit_name);
         mDescriptionTextView = view.findViewById(R.id.addedit_description);
         mSortOrderTextView = view.findViewById(R.id.addedit_sortorder);
-        mSaveButton = view.findViewById(R.id.addedit_save);
-        Bundle arguments = getActivity().getIntent().getExtras();
+        Button saveButton = view.findViewById(R.id.addedit_save);
+
+//        Bundle arguments = getActivity().getIntent().getExtras();
+        Bundle arguments = getArguments();
         final Task task;
         if (arguments != null) {
             task = (Task) arguments.getSerializable(Task.class.getSimpleName());
@@ -57,7 +97,7 @@ public class AddEditActivityFragment extends Fragment {
             mMode = FragmentEditMode.ADD;
 
         }
-        mSaveButton.setOnClickListener(new View.OnClickListener() {
+        saveButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
@@ -71,10 +111,10 @@ public class AddEditActivityFragment extends Fragment {
                 ContentValues values = new ContentValues();
                 switch (mMode) {
                     case EDIT:
-                        if (mNameTextView.getText().equals(task.getName())) {
+                        if (!mNameTextView.getText().toString().equals(task.getName())) {
                             values.put(TasksContract.Columns.TASKS_NAME, mNameTextView.getText().toString());
                         }
-                        if (mDescriptionTextView.getText().equals(task.getDescription())) {
+                        if (!mDescriptionTextView.getText().toString().equals(task.getDescription())) {
                             values.put(TasksContract.Columns.TASKS_DESCRIPTION, mDescriptionTextView.getText().toString());
                         }
                         if (so != task.getSortOrder()) {
@@ -92,17 +132,22 @@ public class AddEditActivityFragment extends Fragment {
                             values.put(TasksContract.Columns.TASKS_NAME, mNameTextView.getText().toString());
                             values.put(TasksContract.Columns.TASKS_DESCRIPTION, mDescriptionTextView.getText().toString());
                             values.put(TasksContract.Columns.TASKS_SORTORDER, so);
-                            contentResolver.insert(TasksContract.CONTENT_URI,values);
+                            contentResolver.insert(TasksContract.CONTENT_URI, values);
                         }
                         break;
                 }
-
+                if (mSaveListener != null) {
+                    mSaveListener.onSaveClicked();
+                }
 
             }
         });
 
         return view;
     }
-
+    public boolean canClose(){
+        Log.d(TAG, "canClose: started");
+        return false;
+    }
 
 }

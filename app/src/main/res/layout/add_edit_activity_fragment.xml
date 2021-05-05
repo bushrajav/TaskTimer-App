@@ -16,7 +16,7 @@
         android:ems="10"
         android:hint="@string/addedit_name_hint"
         android:inputType="textNoSuggestions"
-        android:maxLength="64" />
+        android:maxLength="64"/>
 
     <EditText
         android:id="@+id/addedit_description"

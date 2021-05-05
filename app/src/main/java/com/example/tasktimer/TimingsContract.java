@@ -1,6 +1,4 @@
 package com.example.tasktimer;
-
-import android.app.TaskStackBuilder;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -8,14 +6,14 @@ import android.provider.BaseColumns;
 import static com.example.tasktimer.AppProvider.CONTENT_AUTHORITY;
 import static com.example.tasktimer.AppProvider.CONTENT_AUTHORITY_URI;
 
-public class TasksContract {
-    static final String TABLE_NAME="Tasks";
+public class TimingsContract {
+    static final String TABLE_NAME="Timings";
 
     public static class Columns{
         public static final String _ID= BaseColumns._ID;
-        public static final String TASKS_NAME="Names";
-        public static final String TASKS_DESCRIPTION="Description";
-        public static final String TASKS_SORTORDER="SortOrder";
+        public static final String TIMINGS_TASK_ID="TaskId";
+        public static final String TIMINGS_START_TIME="StartTime";
+        public static final String TIMINGS_DURATION="Duration";
 
         private Columns(){
 
@@ -27,11 +25,11 @@ public class TasksContract {
     static final String CONTENT_ITEM_TYPE="vnd.android.cursor.item/vnd."+CONTENT_AUTHORITY+"."+TABLE_NAME;
 
 
-    public static Uri buildTaskUri(long taskId){
-        return ContentUris.withAppendedId(CONTENT_URI,taskId);
+    public static Uri buildTimingUri(long TimingId){
+        return ContentUris.withAppendedId(CONTENT_URI,TimingId);
     }
 
-    public static long getTaskId(Uri uri){
+    public static long getTimingId(Uri uri){
         return ContentUris.parseId(uri);
 
     }
