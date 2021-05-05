@@ -26,8 +26,7 @@
     <string name="addedit_save_text">Save</string>
     <string name="title_activity_add_edit">AddEditActivity</string>
     <string name="instructions_heading">Instructions</string>
-    <string name="instuctions">click the + button to add a task./n/n The tasks will be added with names in alphabetical order and sort order. Tapping the task till start the timer for the task</string>
-    <string name="instructions" />
+    <string name="instructions">Use the add button (+) in the toolbar above to create new tasks.\n\nTasks with lower sort orders will be placed higher up the list. Tasks with the same sort order will be sorted alphabetically.\n\nTapping a task will start the timer for that task (and will stop the timer for any previous task that was being timed). \n\nEach task has Edit and Delete buttons if you want to change the details or remove the task.</string>
     <string name="ok">ok</string>
     <string name="cancel">cancel</string>
     <string name="deldiag_positive_caption">Delete</string>
